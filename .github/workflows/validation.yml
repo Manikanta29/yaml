@@ -81,6 +81,4 @@ jobs:
         if: success()
         run: |
            sf project deploy validate -x parsed_changes/package.xml \
-            --target-org DI \
-            -1 RunLocalTests \
-            -- verbose 
+            --target-org "DI -1 RunLocalTests verbose" 
