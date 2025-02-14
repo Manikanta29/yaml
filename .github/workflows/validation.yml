@@ -1,0 +1,86 @@
+name: Github actions
+
+on: pull_request
+
+jobs: 
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: checkout repository
+        uses: actions/checkout@v3
+        with: 
+          fetch-depth: 2 #fetch previous commits
+
+      #- name: checkout code
+       # uses: actions/checkout@v2
+       #script: echo "I am on build stage"
+
+      - name: setup node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: 18.17.0
+
+      #install salesforce cli
+      - name: Install Salesforce CLI
+        run: npm install @salesforce/cli --global    
+     
+     #install oclif dependency
+      - name: install oclif   
+        run: npm install --global oclif@latest
+        
+     # install sfdx_git_delta
+      - name: install sfdx-git-delta
+        run: echo y | sfdx plugins:install sfdx-git-delta@latest
+
+     # salesforce authenticator
+      - name: Authenticate salesforce org
+        run: | 
+            echo "${{ secrets.MYLEARNING35 }}" > sfdx-auth-url.txt
+            sf org login sfdx-url -f sfdx-auth-url.txt -s -a DI
+            
+     # Determine commit range
+      - name: Determine commit range
+        id: git-info
+        run: |
+          echo "Using Github Event: ${{ github.event_name}} "
+          if ["${{github.event_name}}" = "pill_request"]; then
+            echo "base=$(jq -r .pull_request.base.sha < $GITHUB_EVENT_PATH)" >> $GITHUB_ENV
+            echo "head=$(jq -r .pull_request.head.sha < $GITHUB_EVENT_PATH)" >> $GITHUB_ENV
+          else 
+            echo "base=$(git rev-parse HEAD^)" >> $GITHUB_ENV
+            echo "head=$(git rev-parse HEAD)" >> $GITHUB_ENV
+          fi    
+
+     # Generate delta changes
+      - name: Generate Delta changes
+        run : |
+            echo "using base commit: ${{ env.base}}"
+            echi "using head commit: ${{ env.head}}"
+            sfdx sgd:source:delta --to ${{env.head}}  --from ${{env.base}}  --output . > delta.output.txt
+
+    # parse delta changes
+      - name: parse Delta changes
+        run: |
+           mkdir -p parsed_changes
+           if [ -f package/package.xml ]; then
+              echo "Delta Changes detected."
+              mv package/package.xml parsed_changes/
+           else
+              echo "No delta changes for deployment"
+              exit 1
+              fi  
+
+    # Display package.xml
+      - name: Display package.xml
+        if: success()
+        run: cat parsed_changes/package.xml
+
+    # validate deployment
+      - name: validate deployment
+        if: success()
+        run: |
+           sf project deploy validate -x parsed_changes/package.xml \
+            -o DI \
+            -I RunLocalTests \
+            -- verbose 
