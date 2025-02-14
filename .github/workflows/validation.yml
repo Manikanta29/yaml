@@ -57,7 +57,7 @@ jobs:
         run : |
             echo "using base commit: ${{ env.base}}"
             echo "using head commit: ${{ env.head}}"
-            sfdx sgd:source:delta --to ${{env.head}}  --from ${{env.base}}  --output-dir . > delta.output.txt
+            sfdx sgd:source:delta --to ${{env.head}}  --from ${{env.base}}  -o . > delta.output.txt
 
     # parse delta changes
       - name: parse Delta changes
@@ -81,4 +81,6 @@ jobs:
         if: success()
         run: |
            sf project deploy validate -x parsed_changes/package.xml \
-            --target-org "DI -1 RunLocalTests verbose" 
+            -o DI \
+            -1 RunLocalTests \
+            --verbose 
