@@ -44,7 +44,7 @@ jobs:
         id: git-info
         run: |
           echo "Using Github Event: ${{ github.event_name}} "
-          if ["${{github.event_name}}" = "pill_request"]; then
+          if ["${{github.event_name}}" == "pull_request"]; then
             echo "base=$(jq -r .pull_request.base.sha < $GITHUB_EVENT_PATH)" >> $GITHUB_ENV
             echo "head=$(jq -r .pull_request.head.sha < $GITHUB_EVENT_PATH)" >> $GITHUB_ENV
           else 
@@ -56,8 +56,8 @@ jobs:
       - name: Generate Delta changes
         run : |
             echo "using base commit: ${{ env.base}}"
-            echi "using head commit: ${{ env.head}}"
-            sfdx sgd:source:delta --to ${{env.head}}  --from ${{env.base}}  --output . > delta.output.txt
+            echo "using head commit: ${{ env.head}}"
+            sfdx sgd:source:delta --to ${{env.head}}  --from ${{env.base}}  -o . > delta.output.txt
 
     # parse delta changes
       - name: parse Delta changes
@@ -82,5 +82,5 @@ jobs:
         run: |
            sf project deploy validate -x parsed_changes/package.xml \
             -o DI \
-            -I RunLocalTests \
-            -- verbose 
+            -1 RunLocalTests \
+            --verbose 
