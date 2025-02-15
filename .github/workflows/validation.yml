@@ -44,7 +44,7 @@ jobs:
         id: git-info
         run: |
           echo "Using Github Event: ${{ github.event_name}} "
-          if ["${{github.event_name}}" = "pill_request"]; then
+          if ["${{github.event_name}}" == "pull_request"]; then
             echo "base=$(jq -r .pull_request.base.sha < $GITHUB_EVENT_PATH)" >> $GITHUB_ENV
             echo "head=$(jq -r .pull_request.head.sha < $GITHUB_EVENT_PATH)" >> $GITHUB_ENV
           else 
