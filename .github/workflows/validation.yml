@@ -82,5 +82,5 @@ jobs:
         run: |
            sf project deploy validate -x parsed_changes/package.xml \
             -o DI \
-            -1 RunLocalTests \
+            -l RunLocalTests \
             --verbose 
