@@ -32,8 +32,8 @@ private class AccountControllerTest {
 
         insert new List<Account>{activeAccount,inactiveAccount};
 
-        Test.starteTest();
-        List<Account> result = AccountController.testGetAllActiveAccounts();
+        Test.startTest();
+        List<Account> result = AccountController.getAllActiveAccounts();
         Test.stopTest();
 
         System.assertEquals(1, result.size(), 'There should be one active account');
