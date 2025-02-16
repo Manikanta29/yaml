@@ -1,6 +1,12 @@
 name: Github actions
 
-on: pull_request
+on: 
+  pull_request:
+    branches: 
+      - preprod
+    paths:
+      - force-app/**  
+
 
 jobs: 
   build:
