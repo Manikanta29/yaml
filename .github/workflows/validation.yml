@@ -58,7 +58,8 @@ jobs:
             echo "using base commit: ${{ env.base}}"
             echo "using head commit: ${{ env.head}}"
             sfdx sgd:source:delta --to ${{env.head}}  --from ${{env.base}}  -o . > delta.output.txt
-            echo "$(cat delta.output.txt)"
+            run: cat delta.output.txt
+            # echo "$(cat delta.output.txt)"
 
     # parse delta changes
       - name: parse Delta changes
