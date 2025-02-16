@@ -1,0 +1,25 @@
+name: push changes to specific branch after pull request
+
+on: 
+  push:
+    banches: 
+      - preprod
+
+jobs: 
+  action-pull-request:
+    runs-on: ubuntu-latest 
+    steps: 
+      - name: checkout changes
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+
+      - name: merge changes into preprod
+        if: startsWith(github.ref, 'refs/heads/preprod')
+        uses: devops-infra/action-pull-request@v0.4.2
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITTOKEN }}
+        with:
+          github_token: ${{ secrets.GITTOKEN }}
+          title: Automatic pull request
+          git_diff: true             
