@@ -3,7 +3,7 @@ name: push changes to specific branch after pull request
 on: 
   push:
     banches: 
-      - preprod
+      - main
 
 jobs: 
   action-pull-request:
