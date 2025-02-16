@@ -1,4 +1,4 @@
-name: Github actions
+name: Validate the preprod
 
 on: 
   pull_request:
