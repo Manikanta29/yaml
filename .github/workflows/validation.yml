@@ -3,7 +3,7 @@ name: Github actions
 on: 
   pull_request:
     branches: 
-      - preprod
+      - main
     paths:
       - force-app/**  
 
