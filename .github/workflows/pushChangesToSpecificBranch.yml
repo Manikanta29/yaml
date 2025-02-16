@@ -21,5 +21,5 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITTOKEN }}
         with:
           github_token: ${{ secrets.GITTOKEN }}
-        title: Automatic pull request
-        git_diff: true             
+          title: Automatic pull request
+          git_diff: true             
