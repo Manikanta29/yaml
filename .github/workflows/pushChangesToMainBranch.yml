@@ -1,4 +1,4 @@
-name: push changes to specific branch after pull request
+name: push changes to main branch
 
 on: 
   push:
