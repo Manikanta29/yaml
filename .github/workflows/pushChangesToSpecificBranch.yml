@@ -3,7 +3,7 @@ name: push changes to specific branch after pull request
 on: 
   push:
     banches: 
-      - prepod
+      - preprod
 
 jobs: 
   action-pull-request:
@@ -16,10 +16,10 @@ jobs:
 
       - name: merge changes into preprod
         if: startsWith(github.ref, 'refs/heads/preprod')
-        uses: devops-infra/action-pull-request@0.4.2
+        uses: devops-infra/action-pull-request@v0.4.2
         env:
           GITHUB_TOKEN: ${{ secrets.GITTOKEN }}
         with:
           github_token: ${{ secrets.GITTOKEN }}
-        title: Automatic pull request
-        git_diff: true             
+          title: Automatic pull request
+          git_diff: true             
