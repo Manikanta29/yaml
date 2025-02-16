@@ -1,4 +1,4 @@
-name: Github actions
+name: validate the main
 
 on: 
   pull_request:
