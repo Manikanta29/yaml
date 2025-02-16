@@ -12,10 +12,6 @@ jobs:
         with: 
           fetch-depth: 2 #fetch previous commits
 
-      #- name: checkout code
-       # uses: actions/checkout@v2
-       #script: echo "I am on build stage"
-
       - name: setup node.js
         uses: actions/setup-node@v3
         with:
@@ -44,7 +40,7 @@ jobs:
         id: git-info
         run: |
           echo "Using Github Event: ${{ github.event_name}} "
-          if ["${{github.event_name}}" == "pull_request"]; then
+          if [ "${{ github.event_name }}" == "pull_request" ]; then
             echo "base=$(jq -r .pull_request.base.sha < $GITHUB_EVENT_PATH)" >> $GITHUB_ENV
             echo "head=$(jq -r .pull_request.head.sha < $GITHUB_EVENT_PATH)" >> $GITHUB_ENV
           else 
@@ -58,13 +54,12 @@ jobs:
             echo "using base commit: ${{ env.base}}"
             echo "using head commit: ${{ env.head}}"
             sfdx sgd:source:delta --to ${{env.head}}  --from ${{env.base}}  -o . > delta.output.txt
-
     # parse delta changes
       - name: parse Delta changes
         run: |
-           mkdir -p parsed_changes
            if [ -f package/package.xml ]; then
               echo "Delta Changes detected."
+              mkdir -p parsed_changes
               mv package/package.xml parsed_changes/
            else
               echo "No delta changes for deployment"
@@ -73,7 +68,7 @@ jobs:
 
     # Display package.xml
       - name: Display package.xml
-        if: success()
+        if: success() && hashFiles('parsed_changes/package.xml')
         run: cat parsed_changes/package.xml
 
     # validate deployment
